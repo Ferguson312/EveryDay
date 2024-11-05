@@ -1,0 +1,6 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreferenceCompat
+        android:key="dark_mode"
+        android:title="Темная тема"
+        android:summary="Включить/выключить темную тему" />
+</PreferenceScreen>

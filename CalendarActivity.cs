@@ -61,7 +61,8 @@ namespace App2
             int id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
-                return true;
+                Intent intent = new Intent(this, typeof(SettingsAktivity));
+                StartActivity(intent); 
             }
 
             return base.OnOptionsItemSelected(item);
