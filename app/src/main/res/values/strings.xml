@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">EveryDay</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">EveryDay</string>
+    <string name="nav_header_subtitle">Приложение-ежедневник</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Настройки</string>
+
+    <string name="menu_home">Задачи</string>
+    <string name="menu_gallery">Заметки</string>
+    <string name="menu_slideshow">Календарь</string>
+
+    <string-array name="theme_entries">
+        <item>Светлая</item>
+        <item>Тёмная</item>
+        <item>Системная</item>
+        <item>Взрослые (sky/coffеe)</item>
+        <item>Подростки (lollipop/candy)</item>
+    </string-array>
+
+    <string-array name="theme_values">
+        <item>light</item>
+        <item>dark</item>
+        <item>system</item>
+        <item>adult</item>
+        <item>kids</item>
+    </string-array>
+
+</resources>
