@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,61 +12,78 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.everyday.R;
+
 public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
 
-    // Конструктор адаптера, который использует DiffUtil для оптимизации обновлений
-    public TaskAdapter() {
-        super(DIFF_CALLBACK); // Передаем DiffUtil для отслеживания изменений
+    private final TaskAdapterListener listener;
+
+    public interface TaskAdapterListener {
+        void onTaskStatusChanged(Task task);
     }
 
-    // Создание нового ViewHolder для каждого элемента списка
+    public TaskAdapter(TaskAdapterListener listener) {
+        super(DIFF_CALLBACK);
+        this.listener = listener;
+    }
+
     @NonNull
     @Override
-    public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Инфлейтируем layout для одного элемента списка (например, simple_list_item_2)
+    public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(android.R.layout.simple_list_item_2, parent, false);
+                .inflate(R.layout.item_task, parent, false); // Используем layout для элемента списка
         return new TaskViewHolder(itemView);
     }
 
-    // Привязка данных к элементам интерфейса
-    @SuppressLint("DefaultLocale")
     @Override
-    public void onBindViewHolder(TaskViewHolder holder, int position) {
-        // Получаем задачу по позиции
-        Task task = getItem(position);
-
-        // Привязываем данные к элементам списка
-        holder.taskDescription.setText(task.getDescription());
-        holder.taskTime.setText(String.format("%02d:%02d", task.getHour(), task.getMinute()));
+    public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
+        Task task = getItem(position); // Получаем текущую задачу
+        holder.bind(task); // Привязываем данные к ViewHolder
     }
 
-    // Используем DiffUtil для отслеживания изменений в списке
+    class TaskViewHolder extends RecyclerView.ViewHolder {
+
+        private final CheckBox checkBoxCompleted;  // Поменяли на checkBoxCompleted
+        private final TextView textViewDescription;
+        private final TextView textViewDate;
+        private final TextView textViewTime;
+
+        public TaskViewHolder(@NonNull View itemView) {
+            super(itemView);
+            checkBoxCompleted = itemView.findViewById(R.id.checkBoxCompleted); // Исправили id
+            textViewDescription = itemView.findViewById(R.id.textViewDescription);
+            textViewDate = itemView.findViewById(R.id.textViewDate);
+            textViewTime = itemView.findViewById(R.id.textViewTime);
+
+            checkBoxCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                Task task = getItem(getAdapterPosition());
+                task.setDone(isChecked); // Обновляем состояние задачи
+                listener.onTaskStatusChanged(task); // Информируем об изменении
+            });
+        }
+
+        public void bind(Task task) {
+            textViewDescription.setText(task.getDescription()); // Отображаем описание задачи
+            // Форматируем и отображаем дату и время
+            String date = task.getDay() + "/" + task.getMonth() + "/" + task.getYear();
+            textViewDate.setText(date);
+            String time = task.getHour() + ":" + String.format("%02d", task.getMinute());
+            textViewTime.setText(time);
+            checkBoxCompleted.setChecked(task.isDone()); // Устанавливаем состояние флажка
+        }
+    }
+
     private static final DiffUtil.ItemCallback<Task> DIFF_CALLBACK = new DiffUtil.ItemCallback<Task>() {
         @Override
         public boolean areItemsTheSame(@NonNull Task oldItem, @NonNull Task newItem) {
-            // Проверяем, одинаковые ли элементы (например, по ID задачи)
-            return oldItem.getId() == newItem.getId();
+            return oldItem.equals(newItem); // Проверка на равенство по ID или другим данным
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Task oldItem, @NonNull Task newItem) {
-            // Проверяем, одинаковое ли содержимое элемента (например, по содержимому задачи)
-            return oldItem.equals(newItem);
+            return oldItem.getDescription().equals(newItem.getDescription()) &&
+                    oldItem.isDone() == newItem.isDone(); // Сравниваем содержимое задачи
         }
     };
-
-    // Внутренний класс ViewHolder для одного элемента списка
-    public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        // Элементы пользовательского интерфейса
-        public TextView taskDescription;
-        public TextView taskTime;
-
-        // Конструктор ViewHolder
-        public TaskViewHolder(View itemView) {
-            super(itemView);
-            taskDescription = itemView.findViewById(android.R.id.text1);  // описание задачи
-            taskTime = itemView.findViewById(android.R.id.text2);  // время задачи
-        }
-    }
 }
+

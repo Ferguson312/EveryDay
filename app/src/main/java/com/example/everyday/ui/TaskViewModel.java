@@ -7,30 +7,39 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-// ViewModel для хранения списка задач
 public class TaskViewModel extends ViewModel {
+    private final MutableLiveData<List<Task>> taskList = new MutableLiveData<>();
 
-    // MutableLiveData для хранения списка задач
-    private final MutableLiveData<List<Task>> taskListLiveData = new MutableLiveData<>(new ArrayList<>());
+    public TaskViewModel() {
+        // Инициализируем список задач, если это необходимо
+        taskList.setValue(new ArrayList<>());
+    }
 
-    // Получить список задач
     public LiveData<List<Task>> getTaskList() {
-        return taskListLiveData;
+        return taskList;
     }
 
     // Метод для добавления задачи
     public void addTask(Task task) {
-        List<Task> currentTasks = taskListLiveData.getValue(); // Получаем текущий список задач
+        List<Task> currentTasks = taskList.getValue();
         if (currentTasks != null) {
-            currentTasks.add(task);  // Добавляем новую задачу
-            taskListLiveData.setValue(currentTasks); // Обновляем LiveData с новым списком
+            currentTasks.add(task);
+            taskList.setValue(currentTasks); // Обновляем LiveData
         }
     }
-//    public void addTask(Task task) {
-//        List<Task> currentTasks = taskListLiveData.getValue(); // Получаем текущий список задач
-//        if (currentTasks != null) {
-//            currentTasks.add(task); // Добавляем новую задачу
-//            taskListLiveData.setValue(new ArrayList<>(currentTasks)); // Обновляем LiveData с новым списком
-//        }
-//    }
+
+    // Метод для обновления задачи
+    public void updateTask(Task updatedTask) {
+        List<Task> currentTasks = taskList.getValue();
+        if (currentTasks != null) {
+            for (int i = 0; i < currentTasks.size(); i++) {
+                Task task = currentTasks.get(i);
+                if (task.getId().equals(updatedTask.getId())) {
+                    currentTasks.set(i, updatedTask); // Обновляем задачу в списке
+                    break;
+                }
+            }
+            taskList.setValue(currentTasks); // Обновляем LiveData
+        }
+    }
 }

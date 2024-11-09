@@ -92,7 +92,15 @@ public class MainActivity extends AppCompatActivity {
 
     // Метод для открытия TaskDialogFragment
     private void openTaskDialog() {
-        TaskDialogFragment taskDialogFragment = new TaskDialogFragment(this::addTaskToRecyclerView);
+        TaskDialogFragment taskDialogFragment = new TaskDialogFragment();
+
+        // Устанавливаем слушателя для фрагмента через setTaskDialogListener
+        taskDialogFragment.setTaskDialogListener(task -> {
+            // Добавляем задачу в ViewModel
+            taskViewModel.addTask(task);
+        });
+
+        // Показать фрагмент
         taskDialogFragment.show(getSupportFragmentManager(), "TaskDialog");
     }
 

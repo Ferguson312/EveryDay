@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +20,7 @@ import com.example.everyday.ui.TaskViewModel;
 
 import java.util.List;
 
-public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDialogListener {
+public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDialogListener, TaskAdapter.TaskAdapterListener {
 
     private FragmentHomeBinding binding;
     private TaskAdapter taskAdapter;
@@ -37,7 +36,7 @@ public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDia
 
         // Инициализация RecyclerView
         RecyclerView recyclerViewTasks = binding.recyclerViewTasks;
-        taskAdapter = new TaskAdapter();
+        taskAdapter = new TaskAdapter(this);  // Передаем слушателя (this) для обработки изменений
         recyclerViewTasks.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewTasks.setAdapter(taskAdapter);
 
@@ -49,20 +48,29 @@ public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDia
         return root;
     }
 
-//    @Override
-//    public void onTaskSaved(Task task) {
-//        // Добавляем новую задачу в ViewModel
-//        taskViewModel.addTask(task);
-//    }
-@Override
-public void onTaskSaved(Task task) {
-    taskViewModel.addTask(task);  // Добавляем задачу в ViewModel
-    // Этот код гарантирует, что задача отобразится сразу
-    //taskAdapter.submitList(taskViewModel.getTaskList().getValue());
-    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        taskAdapter.submitList(taskViewModel.getTaskList().getValue());
-    }, 500); // Полсекунды задержки
-}
+    // Метод для открытия диалога добавления задачи
+    public void openTaskDialog() {
+        TaskDialogFragment taskDialog = new TaskDialogFragment();
+        taskDialog.setTaskDialogListener(this);  // Устанавливаем слушателя для диалога
+        taskDialog.show(getParentFragmentManager(), "TaskDialogFragment");
+    }
+
+    @Override
+    public void onTaskSaved(Task task) {
+        taskViewModel.addTask(task);  // Добавляем задачу в ViewModel
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            taskAdapter.submitList(taskViewModel.getTaskList().getValue());
+        }, 500); // Полсекунды задержки
+    }
+
+    // Реализация слушателя для изменения состояния задачи
+    @Override
+    public void onTaskStatusChanged(Task task) {
+        taskViewModel.updateTask(task);  // Обновляем задачу в ViewModel
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            taskAdapter.submitList(taskViewModel.getTaskList().getValue());
+        }, 500);  // Полсекунды задержки для обновления
+    }
 
     @Override
     public void onDestroyView() {
@@ -70,4 +78,3 @@ public void onTaskSaved(Task task) {
         binding = null;
     }
 }
-

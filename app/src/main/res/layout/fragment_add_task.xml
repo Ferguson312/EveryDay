@@ -9,20 +9,48 @@
     <EditText
         android:id="@+id/editTextTask"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="59dp"
+        android:layout_marginBottom="16dp"
         android:hint="Введите задачу"
-        android:inputType="text" />
+        android:padding="12dp"
+        android:textSize="16sp" />
 
-    <!-- Виджет для выбора времени -->
-    <TimePicker
-        android:id="@+id/timePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <!-- Поле для ввода даты (с маской) -->
+    <EditText
+        android:id="@+id/editTextDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="ДД.ММ.ГГГГ"
+        android:inputType="none|text"
+        android:textSize="16sp" />
+
+    <!-- Кнопка для выбора даты -->
+    <Button
+        android:id="@+id/buttonSelectDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Выбрать дату" />
+
+    <!-- Поле для ввода времени (с маской) -->
+    <EditText
+        android:id="@+id/editTextTime"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:hint="ЧЧ:ММ"
+        android:inputType="none|text"
+        android:textSize="16sp" />
+
+    <!-- Кнопка для выбора времени -->
+    <Button
+        android:id="@+id/buttonSelectTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Выбрать время" />
 
     <!-- Кнопка для сохранения задачи -->
     <Button
         android:id="@+id/buttonSaveTask"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Сохранить задачу" />
 </LinearLayout>
