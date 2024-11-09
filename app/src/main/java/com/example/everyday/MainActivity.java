@@ -5,13 +5,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.example.everyday.ui.Task;
 import com.example.everyday.ui.TaskDialogFragment;
 import com.example.everyday.ui.TaskViewModel;
+import com.example.everyday.ui.AddNoteDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -19,28 +22,28 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import com.example.everyday.databinding.ActivityMainBinding;
-import androidx.preference.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private TaskViewModel taskViewModel; // ViewModel для задач
+    private TaskViewModel taskViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Получаем предпочтение темы
+        // Получаем предпочтения для темы
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String theme = preferences.getString("theme_preference", "system");
 
         // Применяем тему ко всему приложению
         applyTheme(theme);
 
-        com.example.everyday.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        // Настройка привязки макета
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
@@ -48,22 +51,24 @@ public class MainActivity extends AppCompatActivity {
         // Получаем ViewModel для задач
         taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
 
-        // Обработка нажатия на FAB
+        // Обработка нажатия на FAB (Floating Action Button)
         binding.appBarMain.fab.setOnClickListener(view -> {
-            // Получаем текущий активный фрагмент
-            NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_content_main);
-            String currentFragmentTag = navController.getCurrentDestination().getLabel().toString();
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+            String currentFragmentLabel = navController.getCurrentDestination().getLabel().toString();
 
-            if ("Задачи".equals(currentFragmentTag)) {
-                // Открыть диалоговое окно для добавления задачи
+            if ("Задачи".equals(currentFragmentLabel)) {
                 openTaskDialog();
+            } else if ("Заметки".equals(currentFragmentLabel)) {
+                showAddNoteDialog();
             } else {
                 Snackbar.make(view, "Функции у этой кнопки пока нет", Snackbar.LENGTH_LONG)
                         .setAction("Action", null)
-                        .setAnchorView(R.id.fab).show();
+                        .setAnchorView(R.id.fab)
+                        .show();
             }
         });
 
+        // Настройка Navigation Drawer
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -76,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
+    // Метод для применения темы
     private void applyTheme(String theme) {
         switch (theme) {
             case "dark":
@@ -84,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             case "light":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 break;
-            case "system":
+            default:
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                 break;
         }
@@ -93,20 +99,20 @@ public class MainActivity extends AppCompatActivity {
     // Метод для открытия TaskDialogFragment
     private void openTaskDialog() {
         TaskDialogFragment taskDialogFragment = new TaskDialogFragment();
-
-        // Устанавливаем слушателя для фрагмента через setTaskDialogListener
         taskDialogFragment.setTaskDialogListener(task -> {
-            // Добавляем задачу в ViewModel
             taskViewModel.addTask(task);
         });
-
-        // Показать фрагмент
         taskDialogFragment.show(getSupportFragmentManager(), "TaskDialog");
     }
 
-    // Метод для добавления задачи в RecyclerView
-    private void addTaskToRecyclerView(Task task) {
-        taskViewModel.addTask(task);  // Добавляем задачу в ViewModel
+    // Метод для отображения AddNoteDialogFragment
+    private void showAddNoteDialog() {
+        AddNoteDialogFragment addNoteDialogFragment = new AddNoteDialogFragment();
+        addNoteDialogFragment.setOnNoteAddedListener((title, content) -> {
+            // TODO: Добавить логику для сохранения заметки
+            Toast.makeText(this, "Заметка добавлена: " + title, Toast.LENGTH_SHORT).show();
+        });
+        addNoteDialogFragment.show(getSupportFragmentManager(), "AddNoteDialog");
     }
 
     @Override
@@ -119,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            // Открыть экран настроек
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
@@ -130,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 }
