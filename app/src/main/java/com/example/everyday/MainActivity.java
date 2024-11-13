@@ -5,16 +5,24 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.everyday.R;
+import com.example.everyday.SettingsActivity;
 import com.example.everyday.databinding.ActivityMainBinding;
+import com.example.everyday.ui.Task;
+import com.example.everyday.ui.TaskDialogFragment;
+import com.example.everyday.ui.TaskViewModel;
+import com.example.everyday.ui.AddNoteDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
@@ -23,6 +31,7 @@ import androidx.preference.PreferenceManager;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private TaskViewModel taskViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +50,32 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
+        // Получаем ViewModel для задач
+        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+
+        // Обработка нажатия на FAB (Floating Action Button)
+        binding.appBarMain.fab.setOnClickListener(view -> {
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+            String currentFragmentLabel = navController.getCurrentDestination().getLabel().toString();
+
+            if ("Задачи".equals(currentFragmentLabel)) {
+                openTaskDialog();
+            } else if ("Заметки".equals(currentFragmentLabel)) {
+                showAddNoteDialog();
+            } else {
+                Snackbar.make(view, "Функции у этой кнопки пока нет", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null)
+                        .setAnchorView(R.id.fab)
+                        .show();
+            }
+        });
+
         // Настройка Navigation Drawer
+        DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
-                .setOpenableLayout(binding.drawerLayout)
+                .setOpenableLayout(drawer)
                 .build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -80,6 +110,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Открытие диалога для добавления задачи
+    private void openTaskDialog() {
+        TaskDialogFragment taskDialogFragment = new TaskDialogFragment();
+        taskDialogFragment.setTaskDialogListener(task -> {
+            taskViewModel.addTask(task);
+        });
+        taskDialogFragment.show(getSupportFragmentManager(), "TaskDialog");
+    }
+
+    // Отображение диалога для добавления заметки
+    private void showAddNoteDialog() {
+        AddNoteDialogFragment addNoteDialogFragment = new AddNoteDialogFragment();
+        addNoteDialogFragment.setOnNoteAddedListener((title, content) -> {
+            // TODO: Добавить логику для сохранения заметки
+            Toast.makeText(this, "Заметка добавлена: " + title, Toast.LENGTH_SHORT).show();
+        });
+        addNoteDialogFragment.show(getSupportFragmentManager(), "AddNoteDialog");
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -90,8 +139,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            // Переход в настройки
-            startActivity(new Intent(this, SettingsActivity.class));
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);

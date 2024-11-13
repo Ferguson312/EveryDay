@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
-import com.example.everyday.R;
-
 public class SettingsActivity extends AppCompatActivity {
 
         @Override
