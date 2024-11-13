@@ -1,14 +1,14 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.Lollipop" parent="Theme.MaterialComponents.DayNight">
+<resources>
+    <!-- Lollipop Theme -->
+    <style name="Theme.Lollipop" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/lollipopPrimary</item>
         <item name="colorPrimaryVariant">@color/lollipopPrimary</item>
         <item name="colorOnPrimary">@color/lollipopText</item>
         <item name="colorSecondary">@color/lollipopSecondary</item>
+        <item name="colorSecondaryVariant">@color/lollipopSecondary</item>
         <item name="colorOnSecondary">@color/lollipopText</item>
         <item name="android:windowBackground">@color/lollipopBackground</item>
         <item name="android:colorBackground">@color/lollipopBackground</item>
         <item name="colorAccent">@color/lollipopAccent</item>
-        <item name="android:textColor">@color/lollipopText</item>
     </style>
 </resources>

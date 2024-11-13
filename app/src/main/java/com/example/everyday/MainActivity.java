@@ -3,16 +3,8 @@ package com.example.everyday;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.Menu;
-import android.widget.Toast;
-
-import com.example.everyday.ui.Task;
-import com.example.everyday.ui.TaskDialogFragment;
-import com.example.everyday.ui.TaskViewModel;
-import com.example.everyday.ui.AddNoteDialogFragment;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -21,15 +13,16 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.preference.PreferenceManager;
 
 import com.example.everyday.databinding.ActivityMainBinding;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.navigation.NavigationView;
+
+import androidx.preference.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private TaskViewModel taskViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,32 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
-        // Получаем ViewModel для задач
-        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
-
-        // Обработка нажатия на FAB (Floating Action Button)
-        binding.appBarMain.fab.setOnClickListener(view -> {
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-            String currentFragmentLabel = navController.getCurrentDestination().getLabel().toString();
-
-            if ("Задачи".equals(currentFragmentLabel)) {
-                openTaskDialog();
-            } else if ("Заметки".equals(currentFragmentLabel)) {
-                showAddNoteDialog();
-            } else {
-                Snackbar.make(view, "Функции у этой кнопки пока нет", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .setAnchorView(R.id.fab)
-                        .show();
-            }
-        });
-
         // Настройка Navigation Drawer
-        DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
-                .setOpenableLayout(drawer)
+                .setOpenableLayout(binding.drawerLayout)
                 .build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -90,29 +62,22 @@ public class MainActivity extends AppCompatActivity {
             case "light":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 break;
-            default:
+            case "system":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                 break;
+            case "Sky":
+                setTheme(R.style.Theme_Sky);
+                break;
+            case "Coffee":
+                setTheme(R.style.Theme_Coffee);
+                break;
+            case "Lollipop":
+                setTheme(R.style.Theme_Lollipop);
+                break;
+            case "Candy":
+                setTheme(R.style.Theme_Candy);
+                break;
         }
-    }
-
-    // Метод для открытия TaskDialogFragment
-    private void openTaskDialog() {
-        TaskDialogFragment taskDialogFragment = new TaskDialogFragment();
-        taskDialogFragment.setTaskDialogListener(task -> {
-            taskViewModel.addTask(task);
-        });
-        taskDialogFragment.show(getSupportFragmentManager(), "TaskDialog");
-    }
-
-    // Метод для отображения AddNoteDialogFragment
-    private void showAddNoteDialog() {
-        AddNoteDialogFragment addNoteDialogFragment = new AddNoteDialogFragment();
-        addNoteDialogFragment.setOnNoteAddedListener((title, content) -> {
-            // TODO: Добавить логику для сохранения заметки
-            Toast.makeText(this, "Заметка добавлена: " + title, Toast.LENGTH_SHORT).show();
-        });
-        addNoteDialogFragment.show(getSupportFragmentManager(), "AddNoteDialog");
     }
 
     @Override
@@ -125,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            // Переход в настройки
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -2,10 +2,13 @@ package com.example.everyday;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+
+import com.example.everyday.R;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -27,9 +30,12 @@ public class SettingsActivity extends AppCompatActivity {
                         if ("theme_preference".equals(key)) {
                                 String theme = sharedPreferences.getString(key, "system");
                                 applyTheme(theme);
-                                recreate();  // Перезапускаем активность для применения новой темы
                         }
                 });
+
+                // Применяем тему сразу при старте активности
+                String theme = preferences.getString("theme_preference", "system");
+                applyTheme(theme);
         }
 
         // Внутренний класс для фрагмента настроек
@@ -41,7 +47,13 @@ public class SettingsActivity extends AppCompatActivity {
                 }
         }
 
+        // Метод для применения выбранной темы
         private void applyTheme(String theme) {
+                // Обновляем настройки темы в SharedPreferences
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                preferences.edit().putString("theme_preference", theme).apply();
+
+                // Применяем тему глобально
                 switch (theme) {
                         case "dark":
                                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -52,16 +64,16 @@ public class SettingsActivity extends AppCompatActivity {
                         case "system":
                                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                                 break;
-                        case "sky":
+                        case "Sky":
                                 setTheme(R.style.Theme_Sky);
                                 break;
-                        case "coffee":
+                        case "Coffee":
                                 setTheme(R.style.Theme_Coffee);
                                 break;
-                        case "lollipop":
+                        case "Lollipop":
                                 setTheme(R.style.Theme_Lollipop);
                                 break;
-                        case "candy":
+                        case "Candy":
                                 setTheme(R.style.Theme_Candy);
                                 break;
                 }
