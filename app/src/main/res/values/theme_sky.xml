@@ -1,0 +1,14 @@
+<resources>
+    <!-- Sky Theme -->
+    <style name="Theme.Sky" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">@color/skyPrimary</item>
+        <item name="colorPrimaryVariant">@color/skyPrimary</item>
+        <item name="colorOnPrimary">@color/skyText</item>
+        <item name="colorSecondary">@color/skySecondary</item>
+        <item name="colorSecondaryVariant">@color/skySecondary</item>
+        <item name="colorOnSecondary">@color/skyText</item>
+        <item name="android:windowBackground">@color/skyBackground</item>
+        <item name="android:colorBackground">@color/skyBackground</item>
+        <item name="colorAccent">@color/skyAccent</item>
+    </style>
+</resources>

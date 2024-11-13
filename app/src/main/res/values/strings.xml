@@ -11,20 +11,25 @@
     <string name="menu_gallery">Заметки</string>
     <string name="menu_slideshow">Календарь</string>
 
-    <string-array name="theme_entries">
-        <item>Светлая</item>
-        <item>Тёмная</item>
-        <item>Системная</item>
-        <item>Взрослые (sky/coffеe)</item>
-        <item>Подростки (lollipop/candy)</item>
-    </string-array>
+    <string name="theme_summary">Select the theme for the app</string>
 
+    <string-array name="theme_entries">
+        <item>Системная</item>
+        <item>Темная</item>
+        <item>Светлая</item>
+        <item>Sky</item>
+        <item>Coffee</item>
+        <item>Lollipop</item>
+        <item>Candy</item>
+    </string-array>
     <string-array name="theme_values">
-        <item>light</item>
-        <item>dark</item>
-        <item>system</item>
-        <item>adult</item>
-        <item>kids</item>
+        <item>Системная</item>
+        <item>Темная</item>
+        <item>Светлая</item>
+        <item>sky</item>
+        <item>coffee</item>
+        <item>lollipop</item>
+        <item>candy</item>
     </string-array>
 
 </resources>

@@ -7,4 +7,38 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+        <!-- Sky Theme Colors -->
+        <color name="skyPrimary">#2196F3</color>
+        <color name="skySecondary">#BBDEFB</color>
+        <color name="skyBackground">#E3F2FD</color>
+        <color name="skyAccent">#64B5F6</color>
+        <color name="skyText">#000000</color>
+        <color name="skyButton">#1565C0</color>
+
+        <!-- Coffee Theme Colors -->
+        <color name="coffeePrimary">#6D4C41</color>
+        <color name="coffeeSecondary">#8D6E63</color>
+        <color name="coffeeBackground">#D7CCC8</color>
+        <color name="coffeeAccent">#A1887F</color>
+        <color name="coffeeText">#3E2723</color>
+        <color name="coffeeButton">#5D4037</color>
+
+        <!-- Lollipop Theme Colors -->
+        <color name="lollipopPrimary">#9C27B0</color> <!-- Violet -->
+        <color name="lollipopSecondary">#E91E63</color> <!-- Pink -->
+        <color name="lollipopBackground">#F3E5F5</color> <!-- Light Lavender -->
+        <color name="lollipopAccent">#D500F9</color> <!-- Deep Violet -->
+        <color name="lollipopText">#FFFFFF</color> <!-- White Text -->
+        <color name="lollipopButton">#AB47BC</color> <!-- Purple Button -->
+
+        <!-- Candy Theme Colors -->
+        <color name="candyPrimary">#FF80AB</color> <!-- Light Pink -->
+        <color name="candySecondary">#F50057</color> <!-- Red -->
+        <color name="candyBackground">#FF4081</color> <!-- Bright Pink -->
+        <color name="candyAccent">#FF1744</color> <!-- Deep Red -->
+        <color name="candyText">#FFFFFF</color> <!-- White Text -->
+        <color name="candyButton">#FF3366</color> <!-- Soft Red -->
+
+
 </resources>
