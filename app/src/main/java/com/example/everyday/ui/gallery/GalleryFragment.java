@@ -8,43 +8,47 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.everyday.R;
+import com.example.everyday.databinding.FragmentGalleryBinding;
+import com.example.everyday.ui.Note;
 import com.example.everyday.ui.NoteAdapter;
 import com.example.everyday.ui.NoteViewModel;
-
-import java.util.List;
 
 public class GalleryFragment extends Fragment {
 
     private NoteViewModel noteViewModel;
     private NoteAdapter noteAdapter;
+    private FragmentGalleryBinding binding; // ViewBinding для фрагмента
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
+        // Получаем binding для фрагмента
+        binding = FragmentGalleryBinding.inflate(inflater, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewNotes);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        // Инициализируем адаптер
+        // Настройка RecyclerView
+        binding.recyclerViewNotes.setLayoutManager(new LinearLayoutManager(getContext()));
         noteAdapter = new NoteAdapter();
-        recyclerView.setAdapter(noteAdapter);
+        binding.recyclerViewNotes.setAdapter(noteAdapter);
 
-        // Инициализируем ViewModel
+        // Инициализация ViewModel
         noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
 
-        // Наблюдаем за изменениями в списке заметок
+        // Наблюдатель за изменениями в списке заметок
         noteViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
-            // Обновляем данные адаптера
+            // Обновление данных в адаптере
             noteAdapter.setNotes(notes);
         });
 
-        return view;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;  // Обнуляем binding, чтобы избежать утечек памяти
     }
 }

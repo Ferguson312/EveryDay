@@ -16,44 +16,43 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.everyday.R;
-import com.example.everyday.SettingsActivity;
 import com.example.everyday.databinding.ActivityMainBinding;
-import com.example.everyday.ui.Task;
+import com.example.everyday.ui.Note;
 import com.example.everyday.ui.TaskDialogFragment;
-import com.example.everyday.ui.TaskViewModel;
 import com.example.everyday.ui.AddNoteDialogFragment;
+import com.example.everyday.ui.TaskViewModel;
+import com.example.everyday.ui.NoteViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
-
 import androidx.preference.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private NoteViewModel noteViewModel;
     private TaskViewModel taskViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Получаем предпочтения для темы
+        // Чтение настроек темы из SharedPreferences
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String theme = preferences.getString("theme_preference", "system");
-
-        // Применяем тему ко всему приложению
         applyTheme(theme);
 
-        // Настройка привязки макета
+        // Инициализация binding
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Настройка Toolbar
         setSupportActionBar(binding.appBarMain.toolbar);
 
-        // Получаем ViewModel для задач
-        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        // Инициализация ViewModel
+        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
+        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);  // Инициализируем TaskViewModel
 
-        // Обработка нажатия на FAB (Floating Action Button)
+        // Настройка FAB для добавления заметки или задачи
         binding.appBarMain.fab.setOnClickListener(view -> {
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             String currentFragmentLabel = navController.getCurrentDestination().getLabel().toString();
@@ -83,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
-    // Метод для применения темы
     private void applyTheme(String theme) {
         switch (theme) {
             case "dark":
@@ -110,21 +108,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Открытие диалога для добавления задачи
+    // Открытие диалога для добавления новой задачи
     private void openTaskDialog() {
         TaskDialogFragment taskDialogFragment = new TaskDialogFragment();
         taskDialogFragment.setTaskDialogListener(task -> {
-            taskViewModel.addTask(task);
+            taskViewModel.addTask(task);  // Используем taskViewModel для задач
         });
         taskDialogFragment.show(getSupportFragmentManager(), "TaskDialog");
     }
 
-    // Отображение диалога для добавления заметки
+    // Открытие диалога для добавления новой заметки
     private void showAddNoteDialog() {
         AddNoteDialogFragment addNoteDialogFragment = new AddNoteDialogFragment();
         addNoteDialogFragment.setOnNoteAddedListener((title, content) -> {
-            // TODO: Добавить логику для сохранения заметки
-            Toast.makeText(this, "Заметка добавлена: " + title, Toast.LENGTH_SHORT).show();
+            Note newNote = new Note(0, title, content);  // Создаем новую заметку
+            noteViewModel.addNote(newNote);  // Добавляем в ViewModel для заметок
+            Toast.makeText(MainActivity.this, "Заметка добавлена: " + title, Toast.LENGTH_SHORT).show();
         });
         addNoteDialogFragment.show(getSupportFragmentManager(), "AddNoteDialog");
     }
