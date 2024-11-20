@@ -10,5 +10,8 @@
         <item name="android:windowBackground">@color/skyBackground</item>
         <item name="android:colorBackground">@color/skyBackground</item>
         <item name="colorAccent">@color/skyAccent</item>
+        <item name="android:popupBackground">@color/menu_background_sky</item>
+        <item name="android:textColor">@color/menu_text_sky</item>
+        <item name="headerBackgroundColor">@color/skyPrimary</item>
     </style>
 </resources>

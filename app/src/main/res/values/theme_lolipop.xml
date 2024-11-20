@@ -10,5 +10,8 @@
         <item name="android:windowBackground">@color/lollipopBackground</item>
         <item name="android:colorBackground">@color/lollipopBackground</item>
         <item name="colorAccent">@color/lollipopAccent</item>
+        <item name="android:popupBackground">@color/menu_background_lollipop</item>
+        <item name="android:textColor">@color/menu_text_lollipop</item>
+        <item name="headerBackgroundColor">@color/lollipopAccent</item>
     </style>
 </resources>

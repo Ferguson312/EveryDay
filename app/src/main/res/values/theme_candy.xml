@@ -9,6 +9,8 @@
         <item name="android:windowBackground">@color/candyBackground</item>
         <item name="android:colorBackground">@color/candyBackground</item>
         <item name="colorAccent">@color/candyAccent</item>
-        <item name="android:textColor">@color/candyText</item>
+        <item name="android:popupBackground">@color/menu_background_candy</item>
+        <item name="android:textColor">@color/menu_text_candy</item>
+        <item name="headerBackgroundColor">@color/candyPrimary</item>
     </style>
 </resources>

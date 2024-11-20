@@ -34,6 +34,8 @@ public class SettingsActivity extends AppCompatActivity {
                 // Применяем тему сразу при старте активности
                 String theme = preferences.getString("theme_preference", "system");
                 applyTheme(theme);
+
+
         }
 
         // Внутренний класс для фрагмента настроек
@@ -75,5 +77,6 @@ public class SettingsActivity extends AppCompatActivity {
                                 setTheme(R.style.Theme_Candy);
                                 break;
                 }
+
         }
 }

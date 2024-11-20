@@ -8,5 +8,9 @@
         <item name="colorSecondaryVariant">@color/coffeeSecondary</item>
         <item name="colorOnSecondary">@color/coffeeText</item>
         <item name="colorAccent">@color/coffeeAccent</item>
+        <item name="android:popupBackground">@color/menu_background_coffee</item>
+        <item name="android:textColor">@color/menu_text_coffee</item>
+        <item name="headerBackgroundColor">@color/coffeePrimary</item>
+
     </style>
 </resources>

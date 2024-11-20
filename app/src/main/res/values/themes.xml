@@ -12,6 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="headerBackgroundColor">@color/purple_500</item>
+
     </style>
 
     <style name="Theme.EveryDay.NoActionBar">
