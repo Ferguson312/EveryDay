@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
                 openTaskDialog();
             } else if ("Заметки".equals(currentFragmentLabel)) {
                 showAddNoteDialog();
+            } else if ("Календарь".equals(currentFragmentLabel)) {
+                openTaskDialog();
             } else {
                 Snackbar.make(view, "Функции у этой кнопки пока нет", Snackbar.LENGTH_LONG)
                         .setAction("Action", null)

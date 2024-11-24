@@ -14,8 +14,6 @@ public class NoteViewModel extends ViewModel {
     public NoteViewModel() {
         // Инициализация списка заметок (это можно заменить на реальный источник данных)
         List<Note> initialNotes = new ArrayList<>();
-        initialNotes.add(new Note(1, "Заметка 1", "Содержание заметки 1"));
-        initialNotes.add(new Note(2, "Заметка 2", "Содержание заметки 2"));
         notes.setValue(initialNotes);
     }
 
