@@ -46,11 +46,13 @@ public class Task {
         this.year = year;
     }
 
-    public int getMonth() {
-        return month;
+    public int getMonth() {        return month;
     }
 
     public void setMonth(int month) {
+        if (month < 1 || month > 12) {
+            throw new IllegalArgumentException("Месяц должен быть в диапазоне от 1 до 12");
+        }
         this.month = month;
     }
 
@@ -59,6 +61,9 @@ public class Task {
     }
 
     public void setDay(int day) {
+        if (day < 1 || day > getDaysInMonth(month, year)) {
+            throw new IllegalArgumentException("Некорректный день для данного месяца");
+        }
         this.day = day;
     }
 
@@ -67,6 +72,9 @@ public class Task {
     }
 
     public void setHour(int hour) {
+        if (hour < 0 || hour > 23) {
+            throw new IllegalArgumentException("Час должен быть в диапазоне от 0 до 23");
+        }
         this.hour = hour;
     }
 
@@ -75,6 +83,9 @@ public class Task {
     }
 
     public void setMinute(int minute) {
+        if (minute < 0 || minute > 59) {
+            throw new IllegalArgumentException("Минуты должны быть в диапазоне от 0 до 59");
+        }
         this.minute = minute;
     }
 
@@ -88,7 +99,23 @@ public class Task {
         this.done = done;
     }
 
-    // Метод для сравнения задач по идентификатору (если необходимо)
+    // Метод для переключения состояния выполнения задачи
+    public void toggleDone() {
+        this.done = !this.done;
+    }
+
+    // Метод toString для удобного вывода информации о задаче
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id='" + id +
+        ", description='" + description +
+        ", date=" + String.format("%02d/%02d/%04d", day, month, year) +
+                ", time=" + String.format("%02d:%02d", hour, minute) +
+                ", done=" + done +
+                '}';
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -102,5 +129,22 @@ public class Task {
     @Override
     public int hashCode() {
         return id.hashCode();  // Используем id для расчета хэш-кода
+    }
+
+    private int getDaysInMonth(int month, int year) {
+        switch (month) {
+            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+                return 31;
+            case 4: case 6: case 9: case 11:
+                return 30;
+            case 2:
+                return (isLeapYear(year) ? 29 : 28);
+            default:
+                throw new IllegalArgumentException("Некорректный месяц");
+        }
+    }
+
+    private boolean isLeapYear(int year) {
+        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
 }

@@ -33,7 +33,7 @@ public class GalleryViewModel extends ViewModel {
     }
 
     // Метод для получения всех заметок
-    public LiveData<List<Note>> getAllNotes() {
+    public LiveData<List<Note>> getNotes() {
         return notesList;
     }
 

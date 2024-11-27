@@ -28,6 +28,7 @@ public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDia
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Инициализация привязки фрагмента
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -37,7 +38,7 @@ public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDia
         // Инициализация RecyclerView
         RecyclerView recyclerViewTasks = binding.recyclerViewTasks;
         taskAdapter = new TaskAdapter(this);  // Передаем слушателя (this) для обработки изменений
-        recyclerViewTasks.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerViewTasks.setLayoutManager(new LinearLayoutManager(requireContext())); // Используем requireContext()
         recyclerViewTasks.setAdapter(taskAdapter);
 
         // Подписываемся на изменения в списке задач
@@ -45,7 +46,7 @@ public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDia
             taskAdapter.submitList(tasks); // Обновляем RecyclerView
         });
 
-        return root;
+        return root; // Возвращаем корневое представление
     }
 
     // Метод для открытия диалога добавления задачи
@@ -55,23 +56,22 @@ public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDia
         taskDialog.show(getParentFragmentManager(), "TaskDialogFragment");
     }
 
+
+
+
     @Override
     public void onTaskSaved(Task task) {
-        taskViewModel.addTask(task);  // Добавляем задачу в ViewModel
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            taskAdapter.submitList(taskViewModel.getTaskList().getValue());
-        }, 500); // Полсекунды задержки
+        if (task != null) {
+            taskViewModel.addTask(task);
+        }
     }
 
-    // Реализация слушателя для изменения состояния задачи
     @Override
     public void onTaskStatusChanged(Task task) {
-        taskViewModel.updateTask(task);  // Обновляем задачу в ViewModel
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            taskAdapter.submitList(taskViewModel.getTaskList().getValue());
-        }, 500);  // Полсекунды задержки для обновления
+        if (task != null) {
+            taskViewModel.updateTask(task);
+        }
     }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();

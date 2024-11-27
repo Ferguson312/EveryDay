@@ -23,9 +23,18 @@ public class NoteViewModel extends ViewModel {
 
     public void addNote(Note note) {
         List<Note> currentNotes = notes.getValue();
+        if (currentNotes == null) {
+            currentNotes = new ArrayList<>(); // Создаем новый список, если текущий равен null
+        }
+        currentNotes.add(note);
+        notes.setValue(currentNotes); // Устанавливаем новый список
+    }
+
+    public void removeNote(Note note) {
+        List<Note> currentNotes = notes.getValue();
         if (currentNotes != null) {
-            currentNotes.add(note);
-            notes.setValue(currentNotes);
+            currentNotes.remove(note);
+            notes.setValue(currentNotes); // Устанавливаем новый список
         }
     }
 }
