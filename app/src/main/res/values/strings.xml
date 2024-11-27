@@ -14,7 +14,6 @@
     <string name="theme_summary">Select the theme for the app</string>
 
     <string-array name="theme_entries">
-        <item>Системная</item>
         <item>Темная</item>
         <item>Светлая</item>
         <item>Sky</item>
@@ -23,7 +22,6 @@
         <item>Candy</item>
     </string-array>
     <string-array name="theme_values">
-        <item>Системная</item>
         <item>Темная</item>
         <item>Светлая</item>
         <item>Sky</item>

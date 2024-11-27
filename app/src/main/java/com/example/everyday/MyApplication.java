@@ -2,6 +2,8 @@ package com.example.everyday;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
