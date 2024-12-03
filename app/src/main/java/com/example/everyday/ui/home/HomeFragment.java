@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,9 +57,6 @@ public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDia
         taskDialog.show(getParentFragmentManager(), "TaskDialogFragment");
     }
 
-
-
-
     @Override
     public void onTaskSaved(Task task) {
         if (task != null) {
@@ -72,6 +70,14 @@ public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDia
             taskViewModel.updateTask(task);
         }
     }
+
+    @Override
+    public void onTaskDeleted(Task task) {
+        if (task != null) {
+            taskViewModel.removeTask(task);
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

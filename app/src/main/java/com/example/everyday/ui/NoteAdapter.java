@@ -3,6 +3,7 @@ package com.example.everyday.ui;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,6 +30,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         Note note = notes.get(position);
         holder.titleTextView.setText(note.getTitle());
         holder.contentTextView.setText(note.getContent());
+
+        // Устанавливаем слушатель для кнопки удаления
+        holder.deleteButton.setOnClickListener(v -> {
+            removeNoteAtPosition(holder.getBindingAdapterPosition());
+        });
     }
 
     @Override
@@ -41,15 +47,27 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         notifyDataSetChanged();
     }
 
+    /**
+     * Удаление заметки по позиции
+     */
+    private void removeNoteAtPosition(int position) {
+        if (position >= 0 && position < notes.size()) {
+            notes.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
     public static class NoteViewHolder extends RecyclerView.ViewHolder {
 
         TextView titleTextView;
         TextView contentTextView;
+        Button deleteButton;
 
         public NoteViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.textViewTitle);
             contentTextView = itemView.findViewById(R.id.textViewContent);
+            deleteButton = itemView.findViewById(R.id.buttonDelete);
         }
     }
 }

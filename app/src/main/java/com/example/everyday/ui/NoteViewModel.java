@@ -27,14 +27,22 @@ public class NoteViewModel extends ViewModel {
             currentNotes = new ArrayList<>(); // Создаем новый список, если текущий равен null
         }
         currentNotes.add(note);
-        notes.setValue(currentNotes); // Устанавливаем новый список
+        notes.postValue(currentNotes); // Устанавливаем новый список
     }
 
     public void removeNote(Note note) {
         List<Note> currentNotes = notes.getValue();
         if (currentNotes != null) {
-            currentNotes.remove(note);
-            notes.setValue(currentNotes); // Устанавливаем новый список
+            currentNotes.removeIf(existingNote -> existingNote.getId() == note.getId()); // Удаляем заметку по идентификатору
+            notes.postValue(currentNotes); // Устанавливаем новый список
+        }
+    }
+
+    public void removeNoteById(int noteId) {
+        List<Note> currentNotes = notes.getValue();
+        if (currentNotes != null) {
+            currentNotes.removeIf(existingNote -> existingNote.getId() == noteId); // Удаляем заметку по идентификатору
+            notes.postValue(currentNotes); // Устанавливаем новый список
         }
     }
 }

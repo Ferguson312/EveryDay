@@ -42,4 +42,13 @@ public class TaskViewModel extends ViewModel {
             taskList.setValue(currentTasks); // Обновляем LiveData
         }
     }
+
+    // Метод для удаления задачи
+    public void removeTask(Task task) {
+        List<Task> currentTasks = taskList.getValue();
+        if (currentTasks != null) {
+            currentTasks.removeIf(t -> t.getId().equals(task.getId()));
+            taskList.setValue(currentTasks); // Обновляем LiveData
+        }
+    }
 }

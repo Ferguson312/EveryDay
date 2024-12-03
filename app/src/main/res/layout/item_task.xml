@@ -9,10 +9,9 @@
     app:cardElevation="2dp"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="16dp">
 
         <!-- Описание задачи -->
@@ -31,6 +30,7 @@
             android:layout_height="wrap_content"
             android:text="Дата"
             android:textSize="16sp"
+            android:layout_below="@id/textViewDescription"
             android:layout_marginTop="8dp"/>
 
         <!-- Время задачи -->
@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:text="Время"
             android:textSize="16sp"
+            android:layout_below="@id/textViewDate"
             android:layout_marginTop="4dp"/>
 
         <!-- Чекбокс для отслеживания выполнения задачи -->
@@ -48,7 +49,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Задача выполнена"
+            android:layout_below="@id/textViewTime"
             android:layout_marginTop="8dp"/>
-    </LinearLayout>
+
+        <!-- Обычная красная кнопка удаления -->
+        <Button
+            android:id="@+id/buttonDelete2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="Удалить"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#FF0000"/>
+
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

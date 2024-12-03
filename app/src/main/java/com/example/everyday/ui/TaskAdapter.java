@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
 
     public interface TaskAdapterListener {
         void onTaskStatusChanged(Task task);
+        void onTaskDeleted(Task task); // Метод для удаления заметки
     }
 
     public TaskAdapter(TaskAdapterListener listener) {
@@ -31,59 +33,69 @@ public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_task, parent, false); // Используем layout для элемента списка
+                .inflate(R.layout.item_task, parent, false);
         return new TaskViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        Task task = getItem(position); // Получаем текущую задачу
-        holder.bind(task); // Привязываем данные к ViewHolder
+        Task task = getItem(position);
+        holder.bind(task);
+
+        // Обработчик нажатия на кнопку "Удалить"
+        holder.buttonDelete2.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onTaskDeleted(task);
+            }
+        });
     }
 
     class TaskViewHolder extends RecyclerView.ViewHolder {
 
-        private final CheckBox checkBoxCompleted;  // Поменяли на checkBoxCompleted
+        private final CheckBox checkBoxCompleted;
         private final TextView textViewDescription;
         private final TextView textViewDate;
         private final TextView textViewTime;
+        private final Button buttonDelete2;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            checkBoxCompleted = itemView.findViewById(R.id.checkBoxCompleted); // Исправили id
+            checkBoxCompleted = itemView.findViewById(R.id.checkBoxCompleted);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             textViewDate = itemView.findViewById(R.id.textViewDate);
             textViewTime = itemView.findViewById(R.id.textViewTime);
+            buttonDelete2 = itemView.findViewById(R.id.buttonDelete2);
 
             checkBoxCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 Task task = getItem(getAdapterPosition());
-                task.setDone(isChecked); // Обновляем состояние задачи
-                listener.onTaskStatusChanged(task); // Информируем об изменении
+                task.setDone(isChecked);
+                listener.onTaskStatusChanged(task);
             });
         }
 
         public void bind(Task task) {
-            textViewDescription.setText(task.getDescription()); // Отображаем описание задачи
-            // Форматируем и отображаем дату и время
+            textViewDescription.setText(task.getDescription());
             String date = task.getDay() + "/" + task.getMonth() + "/" + task.getYear();
             textViewDate.setText(date);
             String time = task.getHour() + ":" + String.format("%02d", task.getMinute());
             textViewTime.setText(time);
-            checkBoxCompleted.setChecked(task.isDone()); // Устанавливаем состояние флажка
+            checkBoxCompleted.setChecked(task.isDone());
+
+            // Показать кнопку удаления только для невыполненных задач
+            buttonDelete2.setVisibility(task.isDone() ? View.GONE : View.VISIBLE);
         }
     }
 
     private static final DiffUtil.ItemCallback<Task> DIFF_CALLBACK = new DiffUtil.ItemCallback<Task>() {
         @Override
         public boolean areItemsTheSame(@NonNull Task oldItem, @NonNull Task newItem) {
-            return oldItem.equals(newItem); // Проверка на равенство по ID или другим данным
+            return oldItem.equals(newItem);
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Task oldItem, @NonNull Task newItem) {
             return oldItem.getDescription().equals(newItem.getDescription()) &&
-                    oldItem.isDone() == newItem.isDone(); // Сравниваем содержимое задачи
+                    oldItem.isDone() == newItem.isDone();
         }
     };
 }
-

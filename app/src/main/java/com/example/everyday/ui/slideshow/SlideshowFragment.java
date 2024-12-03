@@ -88,6 +88,17 @@ public class SlideshowFragment extends Fragment implements TaskAdapter.TaskAdapt
         }
     }
 
+    @Override
+    public void onTaskDeleted(Task task) {
+        // Удаляем задачу из списка задач
+        List<Task> tasks = taskMap.get(selectedDate);
+        if (tasks != null) {
+            tasks.remove(task);
+            taskMap.put(selectedDate, tasks);
+            taskAdapter.submitList(new ArrayList<>(tasks));
+        }
+    }
+
     public void addTask(Task newTask) {
         // Добавляем задачу к текущей дате
         List<Task> tasks = taskMap.getOrDefault(selectedDate, new ArrayList<>());
