@@ -14,19 +14,22 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.everyday.R;
+import com.example.everyday.TaskRepository;
 
 public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
 
     private final TaskAdapterListener listener;
+    private final TaskRepository repository;
 
     public interface TaskAdapterListener {
         void onTaskStatusChanged(Task task);
         void onTaskDeleted(Task task); // Метод для удаления заметки
     }
 
-    public TaskAdapter(TaskAdapterListener listener) {
+    public TaskAdapter(TaskAdapterListener listener, TaskRepository repository) {
         super(DIFF_CALLBACK);
         this.listener = listener;
+        this.repository = repository;
     }
 
     @NonNull

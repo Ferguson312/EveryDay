@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.everyday.TaskRepository;
 import com.example.everyday.databinding.FragmentHomeBinding;
 import com.example.everyday.ui.Task;
 import com.example.everyday.ui.TaskAdapter;
@@ -26,7 +27,7 @@ public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDia
     private FragmentHomeBinding binding;
     private TaskAdapter taskAdapter;
     private TaskViewModel taskViewModel; // ViewModel для задач
-
+    private TaskRepository repository;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Инициализация привязки фрагмента
@@ -35,10 +36,10 @@ public class HomeFragment extends Fragment implements TaskDialogFragment.TaskDia
 
         // Получаем ViewModel для задач
         taskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
-
+        repository = new TaskRepository(requireContext());
         // Инициализация RecyclerView
         RecyclerView recyclerViewTasks = binding.recyclerViewTasks;
-        taskAdapter = new TaskAdapter(this);  // Передаем слушателя (this) для обработки изменений
+        taskAdapter = new TaskAdapter(this, repository); // Передаем слушателя (this) для обработки изменений
         recyclerViewTasks.setLayoutManager(new LinearLayoutManager(requireContext())); // Используем requireContext()
         recyclerViewTasks.setAdapter(taskAdapter);
 

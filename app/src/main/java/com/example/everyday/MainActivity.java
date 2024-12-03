@@ -1,15 +1,20 @@
 package com.example.everyday;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -26,6 +31,7 @@ import com.example.everyday.ui.NoteViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import androidx.preference.PreferenceManager;
+import android.Manifest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,9 +39,21 @@ public class MainActivity extends AppCompatActivity {
     private NoteViewModel noteViewModel;
     private TaskViewModel taskViewModel;
 
+    private static final int REQUEST_NOTIFICATION_PERMISSION = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQUEST_NOTIFICATION_PERMISSION
+                );
+            }
+        }
 
         // Чтение настроек темы из SharedPreferences
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -84,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
+
     private void applyTheme(String theme) {
         switch (theme) {
             case "dark":
@@ -91,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "light":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case "system":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                 break;
             case "Sky":
                 setTheme(R.style.Theme_Sky);

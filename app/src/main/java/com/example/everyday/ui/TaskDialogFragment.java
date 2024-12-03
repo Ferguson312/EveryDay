@@ -75,7 +75,7 @@ public class TaskDialogFragment extends DialogFragment {
                 if (dateParts.length == 3) {
                     try {
                         day = Integer.parseInt(dateParts[0]);
-                        month = Integer.parseInt(dateParts[1]) - 1;
+                        month = Integer.parseInt(dateParts[1]);
                         year = Integer.parseInt(dateParts[2]);
                     } catch (NumberFormatException e) {
                         Toast.makeText(getContext(), "Некорректный формат даты", Toast.LENGTH_SHORT).show();
