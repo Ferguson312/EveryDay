@@ -75,6 +75,7 @@ public class TaskViewModel extends AndroidViewModel {
             for (int i = 0; i < currentTasks.size(); i++) {
                 Task task = currentTasks.get(i);
                 if (task.getId().equals(updatedTask.getId())) {
+                    repository.updateTask(updatedTask);
                     currentTasks.set(i, updatedTask); // Обновляем задачу в списке
                     break;
                 }
@@ -87,6 +88,7 @@ public class TaskViewModel extends AndroidViewModel {
     public void removeTask(Task task) {
         List<Task> currentTasks = taskList.getValue();
         if (currentTasks != null) {
+            repository.deleteTask(task.getId());
             currentTasks.removeIf(t -> t.getId().equals(task.getId()));
             taskList.setValue(currentTasks); // Обновляем LiveData
         }
