@@ -35,7 +35,22 @@ public class TaskRepository {
 
     public List<Task> getAllTasks() {
         List<Task> tasks = new ArrayList<>();
-        Cursor cursor = database.query(TaskDatabaseHelper.TABLE_TASKS, null, null, null, null, null, null);
+        // Define the sort order
+        String sortOrder = TaskDatabaseHelper.COLUMN_YEAR + " ASC, " +
+                TaskDatabaseHelper.COLUMN_MONTH + " ASC, " +
+                TaskDatabaseHelper.COLUMN_DAY + " ASC, " +
+                TaskDatabaseHelper.COLUMN_HOUR + " ASC, " +
+                TaskDatabaseHelper.COLUMN_MINUTE + " ASC";
+        // Query the database with the sort order
+        Cursor cursor = database.query(
+                TaskDatabaseHelper.TABLE_TASKS,
+                null,
+                null,
+                null,
+                null,
+                null,
+                sortOrder
+        );
 
         while (cursor.moveToNext()) {
             Task task = new Task(

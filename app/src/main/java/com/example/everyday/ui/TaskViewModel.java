@@ -15,6 +15,7 @@ import com.example.everyday.TaskRepository;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -36,8 +37,12 @@ public class TaskViewModel extends AndroidViewModel {
     // Метод для добавления задачи
     public void addTask(Task task) {
         repository.addTask(task);
-        List<Task> currentTasks = new ArrayList<>(Objects.requireNonNull(taskList.getValue()));
-        currentTasks.add(task);
+        List<Task> currentTasks = new ArrayList<>(taskList.getValue() != null ? taskList.getValue() : Collections.emptyList());
+        int index = Collections.binarySearch(currentTasks, task);
+        if (index < 0) {
+            index = -index - 1;
+        }
+        currentTasks.add(index, task);
         taskList.postValue(currentTasks);
         scheduleNotifications(task);
     }

@@ -2,7 +2,7 @@ package com.example.everyday.ui;
 
 import java.util.UUID;
 
-public class Task {
+public class Task implements Comparable<Task>{
 
     private String id;  // Уникальный идентификатор задачи
     private String description;
@@ -146,5 +146,21 @@ public class Task {
 
     private boolean isLeapYear(int year) {
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+    }
+    @Override
+    public int compareTo(Task anotherTask) {
+        int yearComparison = Integer.compare(this.getYear(), anotherTask.getYear());
+        if (yearComparison != 0) return yearComparison;
+
+        int monthComparison = Integer.compare(this.getMonth(), anotherTask.getMonth());
+        if (monthComparison != 0) return monthComparison;
+
+        int dayComparison = Integer.compare(this.getDay(), anotherTask.getDay());
+        if (dayComparison != 0) return dayComparison;
+
+        int hourComparison = Integer.compare(this.getHour(), anotherTask.getHour());
+        if (hourComparison != 0) return hourComparison;
+
+        return Integer.compare(this.getMinute(), anotherTask.getMinute());
     }
 }
