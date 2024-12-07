@@ -40,42 +40,61 @@ public class TaskViewModel extends AndroidViewModel {
             taskList.setValue(currentTasks);
 
 
-            scheduleNotification(task);
+            scheduleNotifications(task);
         }
     }
 
-    private void scheduleNotification(Task task) {
+    private void scheduleNotifications(Task task) {
+        // Первое уведомление за один день до даты задачи
+        scheduleNotification(task, "first_notification_" + task.getId(), generateNotificationId(task.getId(), 1), -1, Calendar.DAY_OF_MONTH,
+                "Напоминание о задаче", "Не забудь выполнить свою задачу: " + task.getDescription());
 
+        // Второе уведомление за один час до даты задачи
+        scheduleNotification(task, "second_notification_" + task.getId(), generateNotificationId(task.getId(), 2), -1, Calendar.HOUR_OF_DAY,
+                "Поспеши", "У тебя остался всего час чтобы выполнить задачу: " + task.getDescription());
+    }
+
+    private int generateNotificationId(String taskId, int notificationNumber) {
+        // Используем комбинацию идентификатора задачи и порядкового номера уведомления
+        return (taskId + "_" + notificationNumber).hashCode();
+    }
+
+    private void scheduleNotification(Task task, String tag, int notificationId, int amount, int field, String title, String text) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(task.getYear(), task.getMonth() - 1, task.getDay(), task.getHour(), task.getMinute());
-        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        calendar.add(field, amount);
 
         long triggerTime = calendar.getTimeInMillis();
         if (triggerTime < System.currentTimeMillis()) {
-
             return;
         }
 
         Data inputData = new Data.Builder()
                 .putString("task_id", task.getId())
+                .putInt("notification_id", notificationId)
+                .putString("notification_title", title)
+                .putString("notification_text", text)
                 .build();
 
         OneTimeWorkRequest notificationRequest = new OneTimeWorkRequest.Builder(NotificationWorker.class)
                 .setInputData(inputData)
                 .setInitialDelay(triggerTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .addTag(tag) // Добавляем уникальный тег для отмены работы
                 .build();
 
         WorkManager.getInstance(getApplication())
                 .enqueue(notificationRequest);
     }
-    public void removeNotification(Task task) {
-        // Отмена работы в WorkManager
+    public void removeNotifications(Task task) {
+        // Отмена работ в WorkManager
         WorkManager workManager = WorkManager.getInstance(getApplication());
-        workManager.cancelAllWorkByTag(task.getId());
+        workManager.cancelAllWorkByTag("first_notification_" + task.getId());
+        workManager.cancelAllWorkByTag("second_notification_" + task.getId());
 
-        // Отмена уведомления
+        // Отмена уведомлений
         NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(task.getId().hashCode());
+        notificationManager.cancel(generateNotificationId(task.getId(), 1)); // Отменяем первое уведомление
+        notificationManager.cancel(generateNotificationId(task.getId(), 2)); // Отменяем второе уведомление
     }
 
 
@@ -86,16 +105,16 @@ public class TaskViewModel extends AndroidViewModel {
             for (int i = 0; i < currentTasks.size(); i++) {
                 Task task = currentTasks.get(i);
                 if (task.getId().equals(updatedTask.getId())) {
-                    boolean wasDone = task.isDone();
+
                     boolean isNowDone = updatedTask.isDone();
 
                     // Если задача была выполнена и теперь не выполнена, создаем уведомление
-                    if (wasDone && !isNowDone) {
-                        scheduleNotification(updatedTask);
+                    if (!isNowDone) {
+                        scheduleNotifications(updatedTask);
                     }
                     // Если задача была не выполнена и теперь выполнена, отменяем уведомление
-                    else if (!wasDone && isNowDone) {
-                        removeNotification(updatedTask);
+                    else if (isNowDone) {
+                        removeNotifications(updatedTask);
                     }
 
                     repository.updateTask(updatedTask);
@@ -112,7 +131,7 @@ public class TaskViewModel extends AndroidViewModel {
         List<Task> currentTasks = taskList.getValue();
         if (currentTasks != null) {
             // Удаляем уведомление
-            removeNotification(task);
+            removeNotifications(task);
 
             // Удаляем задачу из репозитория
             repository.deleteTask(task.getId());

@@ -27,6 +27,9 @@ public class NotificationWorker extends Worker {
     public Result doWork() {
         Context context = getApplicationContext();
         String taskId = getInputData().getString("task_id");
+        int notificationId = getInputData().getInt("notification_id", 1);
+        String notificationTitle = getInputData().getString("notification_title");
+        String notificationText = getInputData().getString("notification_text");
         TaskRepository repository = new TaskRepository(context);
         Task task = repository.getTaskById(taskId); // Assuming repository has this method
 
@@ -38,14 +41,14 @@ public class NotificationWorker extends Worker {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Напоминание о задаче")
-                .setContentText("Не забудь выполнить свою задачу: " + task.getDescription())
+                .setContentTitle(notificationTitle)
+                .setContentText(notificationText)
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(task.hashCode(), builder.build());
+        notificationManager.notify(notificationId, builder.build());
 
         return Result.success();
     }
