@@ -1,5 +1,7 @@
 package com.example.everyday.ui;
 import android.app.Application;
+import android.app.NotificationManager;
+import android.content.Context;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -66,6 +68,15 @@ public class TaskViewModel extends AndroidViewModel {
         WorkManager.getInstance(getApplication())
                 .enqueue(notificationRequest);
     }
+    public void removeNotification(Task task) {
+        // Отмена работы в WorkManager
+        WorkManager workManager = WorkManager.getInstance(getApplication());
+        workManager.cancelAllWorkByTag(task.getId());
+
+        // Отмена уведомления
+        NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(task.getId().hashCode());
+    }
 
 
     // Метод для обновления задачи
@@ -75,6 +86,18 @@ public class TaskViewModel extends AndroidViewModel {
             for (int i = 0; i < currentTasks.size(); i++) {
                 Task task = currentTasks.get(i);
                 if (task.getId().equals(updatedTask.getId())) {
+                    boolean wasDone = task.isDone();
+                    boolean isNowDone = updatedTask.isDone();
+
+                    // Если задача была выполнена и теперь не выполнена, создаем уведомление
+                    if (wasDone && !isNowDone) {
+                        scheduleNotification(updatedTask);
+                    }
+                    // Если задача была не выполнена и теперь выполнена, отменяем уведомление
+                    else if (!wasDone && isNowDone) {
+                        removeNotification(updatedTask);
+                    }
+
                     repository.updateTask(updatedTask);
                     currentTasks.set(i, updatedTask); // Обновляем задачу в списке
                     break;
@@ -88,6 +111,10 @@ public class TaskViewModel extends AndroidViewModel {
     public void removeTask(Task task) {
         List<Task> currentTasks = taskList.getValue();
         if (currentTasks != null) {
+            // Удаляем уведомление
+            removeNotification(task);
+
+            // Удаляем задачу из репозитория
             repository.deleteTask(task.getId());
             currentTasks.removeIf(t -> t.getId().equals(task.getId()));
             taskList.setValue(currentTasks); // Обновляем LiveData

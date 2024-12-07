@@ -17,7 +17,6 @@ import com.example.everyday.TaskRepository;
 public class NotificationWorker extends Worker {
 
     private static final String CHANNEL_ID = "task_notification_channel";
-    private static final int NOTIFICATION_ID = 1;
 
     public NotificationWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -46,7 +45,7 @@ public class NotificationWorker extends Worker {
                 .setAutoCancel(true);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        notificationManager.notify(task.hashCode(), builder.build());
 
         return Result.success();
     }
@@ -62,4 +61,5 @@ public class NotificationWorker extends Worker {
             notificationManager.createNotificationChannel(channel);
         }
     }
+
 }
