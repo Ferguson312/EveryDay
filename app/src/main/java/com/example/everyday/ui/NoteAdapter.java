@@ -17,6 +17,11 @@ import java.util.List;
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
     private List<Note> notes = new ArrayList<>();
+    private final NoteViewModel noteViewModel;
+
+    public NoteAdapter(NoteViewModel noteViewModel) {
+        this.noteViewModel = noteViewModel;
+    }
 
     @NonNull
     @Override
@@ -33,6 +38,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
         // Устанавливаем слушатель для кнопки удаления
         holder.deleteButton.setOnClickListener(v -> {
+            noteViewModel.deleteNote(note);
             removeNoteAtPosition(holder.getBindingAdapterPosition());
         });
     }

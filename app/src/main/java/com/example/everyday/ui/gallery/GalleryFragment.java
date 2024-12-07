@@ -30,19 +30,15 @@ public class GalleryFragment extends Fragment {
         // Получаем binding для фрагмента
         binding = FragmentGalleryBinding.inflate(inflater, container, false);
 
-        // Настройка RecyclerView
-        binding.recyclerViewNotes.setLayoutManager(new LinearLayoutManager(getContext()));
-        noteAdapter = new NoteAdapter();
-        binding.recyclerViewNotes.setAdapter(noteAdapter);
-
         // Инициализация ViewModel
         noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
-
+        // Настройка RecyclerView
+        binding.recyclerViewNotes.setLayoutManager(new LinearLayoutManager(getContext()));
+        NoteAdapter noteAdapter = new NoteAdapter(noteViewModel);
+        binding.recyclerViewNotes.setAdapter(noteAdapter);
         // Наблюдатель за изменениями в списке заметок
-        noteViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
-            // Обновление данных в адаптере
-            noteAdapter.setNotes(notes);
-        });
+        // Обновление данных в адаптере
+        noteViewModel.getNotes().observe(getViewLifecycleOwner(), noteAdapter::setNotes);
 
         return binding.getRoot();
     }

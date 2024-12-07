@@ -1,20 +1,26 @@
 package com.example.everyday.ui;
 
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.everyday.NoteRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class NoteViewModel extends ViewModel {
+public class NoteViewModel extends AndroidViewModel {
 
+    private final NoteRepository noteRepository;
     private final MutableLiveData<List<Note>> notes = new MutableLiveData<>();
 
-    public NoteViewModel() {
-        // Инициализация списка заметок (это можно заменить на реальный источник данных)
-        List<Note> initialNotes = new ArrayList<>();
-        notes.setValue(initialNotes);
+    public NoteViewModel(Application application) {
+        super(application);
+        noteRepository = new NoteRepository(application);
+        notes.setValue(noteRepository.getAllNotes());
     }
 
     public LiveData<List<Note>> getNotes() {
@@ -27,22 +33,11 @@ public class NoteViewModel extends ViewModel {
             currentNotes = new ArrayList<>(); // Создаем новый список, если текущий равен null
         }
         currentNotes.add(note);
+        noteRepository.addNote(note);
         notes.postValue(currentNotes); // Устанавливаем новый список
     }
-
-    public void removeNote(Note note) {
-        List<Note> currentNotes = notes.getValue();
-        if (currentNotes != null) {
-            currentNotes.removeIf(existingNote -> existingNote.getId() == note.getId()); // Удаляем заметку по идентификатору
-            notes.postValue(currentNotes); // Устанавливаем новый список
-        }
+    public void deleteNote(Note note) {
+        noteRepository.deleteNote(note.getId());
     }
 
-    public void removeNoteById(int noteId) {
-        List<Note> currentNotes = notes.getValue();
-        if (currentNotes != null) {
-            currentNotes.removeIf(existingNote -> existingNote.getId() == noteId); // Удаляем заметку по идентификатору
-            notes.postValue(currentNotes); // Устанавливаем новый список
-        }
-    }
 }
