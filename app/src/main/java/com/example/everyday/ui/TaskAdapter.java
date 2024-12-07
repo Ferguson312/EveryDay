@@ -19,17 +19,28 @@ import com.example.everyday.TaskRepository;
 public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
 
     private final TaskAdapterListener listener;
-    private final TaskRepository repository;
 
     public interface TaskAdapterListener {
         void onTaskStatusChanged(Task task);
         void onTaskDeleted(Task task); // Метод для удаления заметки
     }
 
-    public TaskAdapter(TaskAdapterListener listener, TaskRepository repository) {
-        super(DIFF_CALLBACK);
+    public TaskAdapter(TaskAdapterListener listener) {
+        super(new TaskDiffCallback());
         this.listener = listener;
-        this.repository = repository;
+
+    }
+
+    private static class TaskDiffCallback extends DiffUtil.ItemCallback<Task> {
+        @Override
+        public boolean areItemsTheSame(@NonNull Task oldItem, @NonNull Task newItem) {
+            return oldItem.getId().equals(newItem.getId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Task oldItem, @NonNull Task newItem) {
+            return oldItem.equals(newItem);
+        }
     }
 
     @NonNull
@@ -89,16 +100,5 @@ public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
         }
     }
 
-    private static final DiffUtil.ItemCallback<Task> DIFF_CALLBACK = new DiffUtil.ItemCallback<Task>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Task oldItem, @NonNull Task newItem) {
-            return oldItem.equals(newItem);
-        }
 
-        @Override
-        public boolean areContentsTheSame(@NonNull Task oldItem, @NonNull Task newItem) {
-            return oldItem.getDescription().equals(newItem.getDescription()) &&
-                    oldItem.isDone() == newItem.isDone();
-        }
-    };
 }

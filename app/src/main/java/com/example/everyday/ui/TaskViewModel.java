@@ -13,8 +13,10 @@ import androidx.work.WorkManager;
 import com.example.everyday.TaskRepository;
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class TaskViewModel extends AndroidViewModel {
@@ -34,14 +36,10 @@ public class TaskViewModel extends AndroidViewModel {
     // Метод для добавления задачи
     public void addTask(Task task) {
         repository.addTask(task);
-        List<Task> currentTasks = taskList.getValue();
-        if (currentTasks != null) {
-            currentTasks.add(task);
-            taskList.setValue(currentTasks);
-
-
-            scheduleNotifications(task);
-        }
+        List<Task> currentTasks = new ArrayList<>(Objects.requireNonNull(taskList.getValue()));
+        currentTasks.add(task);
+        taskList.postValue(currentTasks);
+        scheduleNotifications(task);
     }
 
     private void scheduleNotifications(Task task) {
@@ -100,43 +98,39 @@ public class TaskViewModel extends AndroidViewModel {
 
     // Метод для обновления задачи
     public void updateTask(Task updatedTask) {
-        List<Task> currentTasks = taskList.getValue();
-        if (currentTasks != null) {
-            for (int i = 0; i < currentTasks.size(); i++) {
-                Task task = currentTasks.get(i);
-                if (task.getId().equals(updatedTask.getId())) {
+        List<Task> currentTasks = new ArrayList<>(Objects.requireNonNull(taskList.getValue()));
+        for (int i = 0; i < currentTasks.size(); i++) {
+            Task task = currentTasks.get(i);
+            if (task.getId().equals(updatedTask.getId())) {
 
-                    boolean isNowDone = updatedTask.isDone();
+                boolean isNowDone = updatedTask.isDone();
 
-                    // Если задача была выполнена и теперь не выполнена, создаем уведомление
-                    if (!isNowDone) {
-                        scheduleNotifications(updatedTask);
-                    }
-                    // Если задача была не выполнена и теперь выполнена, отменяем уведомление
-                    else if (isNowDone) {
-                        removeNotifications(updatedTask);
-                    }
-
-                    repository.updateTask(updatedTask);
-                    currentTasks.set(i, updatedTask); // Обновляем задачу в списке
-                    break;
+                // Если задача была выполнена и теперь не выполнена, создаем уведомление
+                if (!isNowDone) {
+                    scheduleNotifications(updatedTask);
                 }
+                // Если задача была не выполнена и теперь выполнена, отменяем уведомление
+                else if (isNowDone) {
+                    removeNotifications(updatedTask);
+                }
+
+                repository.updateTask(updatedTask);
+                currentTasks.set(i, updatedTask); // Обновляем задачу в списке
+                break;
             }
-            taskList.setValue(currentTasks); // Обновляем LiveData
         }
+        taskList.setValue(currentTasks); // Обновляем LiveData
     }
 
     // Метод для удаления задачи
     public void removeTask(Task task) {
-        List<Task> currentTasks = taskList.getValue();
-        if (currentTasks != null) {
-            // Удаляем уведомление
-            removeNotifications(task);
+        List<Task> currentTasks = new ArrayList<>(Objects.requireNonNull(taskList.getValue()));
+        // Удаляем уведомление
+        removeNotifications(task);
 
-            // Удаляем задачу из репозитория
-            repository.deleteTask(task.getId());
-            currentTasks.removeIf(t -> t.getId().equals(task.getId()));
-            taskList.setValue(currentTasks); // Обновляем LiveData
-        }
+        // Удаляем задачу из репозитория
+        repository.deleteTask(task.getId());
+        currentTasks.removeIf(t -> t.getId().equals(task.getId()));
+        taskList.setValue(currentTasks); // Обновляем LiveData
     }
 }

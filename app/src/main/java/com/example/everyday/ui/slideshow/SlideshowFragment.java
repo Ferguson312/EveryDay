@@ -48,9 +48,8 @@ public class SlideshowFragment extends Fragment implements TaskAdapter.TaskAdapt
         });
 
         // Инициализация RecyclerView
-        TaskRepository repository = new TaskRepository(requireContext());
         binding.taskRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        taskAdapter = new TaskAdapter(this, repository); // Передаём фрагмент как listener
+        taskAdapter = new TaskAdapter(this); // Передаём фрагмент как listener
         binding.taskRecyclerView.setAdapter(taskAdapter);
 
         // Загрузка задач для текущей даты
