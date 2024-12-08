@@ -21,31 +21,82 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class TaskViewModel extends AndroidViewModel {
-    private final MutableLiveData<List<Task>> taskList = new MutableLiveData<>();
+    private final MutableLiveData<List<Task>> allTasks = new MutableLiveData<>(); // Добавляем поле для хранения полного списка задач
     private final TaskRepository repository;
+    private Boolean currentFilter = null; // Добавляем поле для хранения текущего фильтра
 
     public TaskViewModel(Application application) {
         super(application);
         repository = new TaskRepository(application); // Используем application как Context
-        taskList.setValue(repository.getAllTasks());
+        allTasks.setValue(repository.getAllTasks());
     }
 
     public LiveData<List<Task>> getTaskList() {
-        return taskList;
+        return allTasks;
+    }
+
+    public void setCurrentFilter(Boolean filter) {
+        this.currentFilter = filter;
+    }
+
+    public Boolean getCurrentFilter() {
+        return currentFilter;
     }
 
     // Метод для добавления задачи
     public void addTask(Task task) {
-        repository.addTask(task);
-        List<Task> currentTasks = new ArrayList<>(taskList.getValue() != null ? taskList.getValue() : Collections.emptyList());
+        List<Task> currentTasks = new ArrayList<>(Objects.requireNonNull(allTasks.getValue()));
         int index = Collections.binarySearch(currentTasks, task);
         if (index < 0) {
             index = -index - 1;
         }
-        currentTasks.add(index, task);
-        taskList.postValue(currentTasks);
+        currentTasks.add(index,task);
+        allTasks.postValue(currentTasks); // Передаем новый список
         scheduleNotifications(task);
+        repository.addTask(task);
     }
+
+
+
+    // Метод для обновления задачи
+    public void updateTask(Task updatedTask) {
+        List<Task> currentTasks = new ArrayList<>(Objects.requireNonNull(allTasks.getValue()));
+        for (int i = 0; i < currentTasks.size(); i++) {
+            Task task = currentTasks.get(i);
+            if (task.getId().equals(updatedTask.getId())) {
+
+                boolean isNowDone = updatedTask.isDone();
+
+                // Если задача была выполнена и теперь не выполнена, создаем уведомление
+                if (!isNowDone) {
+                    scheduleNotifications(updatedTask);
+                }
+                // Если задача была не выполнена и теперь выполнена, отменяем уведомление
+                else if (isNowDone) {
+                    removeNotifications(updatedTask);
+                }
+
+                repository.updateTask(updatedTask);
+                currentTasks.set(i, updatedTask);
+                allTasks.setValue(currentTasks);// Обновляем задачу в списке
+                break;
+            }
+        }
+
+    }
+
+    // Метод для удаления задачи
+    public void removeTask(Task task) {
+        List<Task> currentTasks = new ArrayList<>(Objects.requireNonNull(allTasks.getValue()));
+        // Удаляем уведомление
+        removeNotifications(task);
+
+        // Удаляем задачу из репозитория
+        repository.deleteTask(task.getId());
+        currentTasks.removeIf(t -> t.getId().equals(task.getId()));
+        allTasks.postValue(currentTasks);
+    }
+
 
     private void scheduleNotifications(Task task) {
         // Первое уведомление за один день до даты задачи
@@ -98,44 +149,5 @@ public class TaskViewModel extends AndroidViewModel {
         NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(generateNotificationId(task.getId(), 1)); // Отменяем первое уведомление
         notificationManager.cancel(generateNotificationId(task.getId(), 2)); // Отменяем второе уведомление
-    }
-
-
-    // Метод для обновления задачи
-    public void updateTask(Task updatedTask) {
-        List<Task> currentTasks = new ArrayList<>(Objects.requireNonNull(taskList.getValue()));
-        for (int i = 0; i < currentTasks.size(); i++) {
-            Task task = currentTasks.get(i);
-            if (task.getId().equals(updatedTask.getId())) {
-
-                boolean isNowDone = updatedTask.isDone();
-
-                // Если задача была выполнена и теперь не выполнена, создаем уведомление
-                if (!isNowDone) {
-                    scheduleNotifications(updatedTask);
-                }
-                // Если задача была не выполнена и теперь выполнена, отменяем уведомление
-                else if (isNowDone) {
-                    removeNotifications(updatedTask);
-                }
-
-                repository.updateTask(updatedTask);
-                currentTasks.set(i, updatedTask); // Обновляем задачу в списке
-                break;
-            }
-        }
-        taskList.setValue(currentTasks); // Обновляем LiveData
-    }
-
-    // Метод для удаления задачи
-    public void removeTask(Task task) {
-        List<Task> currentTasks = new ArrayList<>(Objects.requireNonNull(taskList.getValue()));
-        // Удаляем уведомление
-        removeNotifications(task);
-
-        // Удаляем задачу из репозитория
-        repository.deleteTask(task.getId());
-        currentTasks.removeIf(t -> t.getId().equals(task.getId()));
-        taskList.setValue(currentTasks); // Обновляем LiveData
     }
 }

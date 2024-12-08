@@ -1,5 +1,6 @@
 package com.example.everyday.ui;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Task implements Comparable<Task>{
@@ -19,6 +20,17 @@ public class Task implements Comparable<Task>{
         this.hour = hour;
         this.minute = minute;
         this.done = false; // Задача по умолчанию не выполнена
+    }
+
+    public Task(Task task) {
+        this.id = task.id;  // Копируем идентификатор
+        this.description = task.description;  // Копируем описание
+        this.year = task.year;  // Копируем год
+        this.month = task.month;  // Копируем месяц
+        this.day = task.day;  // Копируем день
+        this.hour = task.hour;  // Копируем час
+        this.minute = task.minute;  // Копируем минуту
+        this.done = task.done;  // Копируем статус выполнения
     }
 
     // Геттеры и сеттеры для всех полей
@@ -117,18 +129,23 @@ public class Task implements Comparable<Task>{
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        Task task = (Task) obj;
-
-        return id.equals(task.id);  // Сравниваем задачи по уникальному идентификатору
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return done == task.done &&
+                id.equals(task.id) &&
+                description.equals(task.description) &&
+                day == task.day &&
+                month == task.month &&
+                year == task.year &&
+                hour == task.hour &&
+                minute == task.minute;
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();  // Используем id для расчета хэш-кода
+        return Objects.hash(id);
     }
 
     private int getDaysInMonth(int month, int year) {

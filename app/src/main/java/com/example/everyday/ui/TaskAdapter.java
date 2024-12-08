@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.everyday.R;
-import com.example.everyday.TaskRepository;
 
 public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
 
@@ -81,9 +80,10 @@ public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
             buttonDelete2 = itemView.findViewById(R.id.buttonDelete2);
 
             checkBoxCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                Task task = getItem(getAdapterPosition());
+                Task task = new Task(getItem(getAdapterPosition()));
                 task.setDone(isChecked);
                 listener.onTaskStatusChanged(task);
+
             });
         }
 
