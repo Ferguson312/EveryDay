@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        setNavigationIconsBasedOnTheme(binding, theme);
+
         // Настройка Toolbar
         setSupportActionBar(binding.appBarMain.toolbar);
 
@@ -103,12 +105,70 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
+    private void setNavigationIconsBasedOnTheme(ActivityMainBinding binding, String theme) {
+        int homeIcon = 0;
+        int galleryIcon = 0;
+        int slideshowIcon = 0;
+//иконки на нужные поменять
+        switch (theme) {
+            case "Темная":
+                homeIcon = R.drawable.ic_menu_gallery;
+                galleryIcon = R.drawable.ic_menu_gallery;
+                slideshowIcon = R.drawable.ic_menu_gallery;
+                break;
+            case "Светлая":
+                homeIcon = R.drawable.ic_menu_gallery;
+                galleryIcon = R.drawable.ic_menu_gallery;
+                slideshowIcon = R.drawable.ic_menu_gallery;
+                break;
+            case "Sky":
+                homeIcon = R.drawable.ic_menu_camera;
+                galleryIcon = R.drawable.ic_menu_slideshow;
+                slideshowIcon = R.drawable.ic_menu_gallery;
+                break;
+            case "Coffee":
+                homeIcon = R.drawable.ic_menu_gallery;
+                galleryIcon = R.drawable.ic_menu_gallery;
+                slideshowIcon = R.drawable.ic_menu_gallery;
+                break;
+            case "Lollipop":
+                homeIcon = R.drawable.ic_menu_gallery;
+                galleryIcon = R.drawable.ic_menu_gallery;
+                slideshowIcon = R.drawable.ic_menu_gallery;
+                break;
+            case "Candy":
+                homeIcon = R.drawable.ic_menu_gallery;
+                galleryIcon = R.drawable.ic_menu_gallery;
+                slideshowIcon = R.drawable.ic_menu_gallery;
+                break;
+            default:
+
+                break;
+        }
+
+        setNavigationIcons(binding, homeIcon, galleryIcon, slideshowIcon);
+    }
+
+    private void setNavigationIcons(ActivityMainBinding binding, int homeIcon, int galleryIcon, int slideshowIcon) {
+        NavigationView navigationView = binding.navView;
+        Menu menu = navigationView.getMenu();
+
+        MenuItem homeItem = menu.findItem(R.id.nav_home);
+        homeItem.setIcon(homeIcon);
+
+        MenuItem galleryItem = menu.findItem(R.id.nav_gallery);
+        galleryItem.setIcon(galleryIcon);
+
+        MenuItem slideshowItem = menu.findItem(R.id.nav_slideshow);
+        slideshowItem.setIcon(slideshowIcon);
+    }
     private void applyTheme(String theme) {
         switch (theme) {
-            case "dark":
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            case "Темная":
+               // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES); просто чёрный экран
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 break;
-            case "light":
+            case "Светлая":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 break;
             case "system":
