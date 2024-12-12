@@ -106,6 +106,12 @@ public class TaskViewModel extends AndroidViewModel {
         // Второе уведомление за один час до даты задачи
         scheduleNotification(task, "second_notification_" + task.getId(), generateNotificationId(task.getId(), 2), -1, Calendar.HOUR_OF_DAY,
                 "Поспеши", "У тебя остался всего час чтобы выполнить задачу: " + task.getDescription());
+        // третье после часа просрочки
+        scheduleNotification(task, "third_notification_" + task.getId(), generateNotificationId(task.getId(), 3), 1, Calendar.HOUR_OF_DAY,
+                "Задача просрочена", "Ты уже просрочил на 1 час задачу: " + task.getDescription());
+        // четвёртое после дня просрочки
+        scheduleNotification(task, "fourth_notification_" + task.getId(), generateNotificationId(task.getId(), 4), 1, Calendar.DAY_OF_MONTH,
+                "Задача просрочена", "Ты уже просрочил на 1 день задачу: " + task.getDescription());
     }
 
     private int generateNotificationId(String taskId, int notificationNumber) {
@@ -144,10 +150,14 @@ public class TaskViewModel extends AndroidViewModel {
         WorkManager workManager = WorkManager.getInstance(getApplication());
         workManager.cancelAllWorkByTag("first_notification_" + task.getId());
         workManager.cancelAllWorkByTag("second_notification_" + task.getId());
+        workManager.cancelAllWorkByTag("third_notification_" + task.getId());
+        workManager.cancelAllWorkByTag("fourth_notification_" + task.getId());
 
         // Отмена уведомлений
         NotificationManager notificationManager = (NotificationManager) getApplication().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(generateNotificationId(task.getId(), 1)); // Отменяем первое уведомление
         notificationManager.cancel(generateNotificationId(task.getId(), 2)); // Отменяем второе уведомление
+        notificationManager.cancel(generateNotificationId(task.getId(), 3));
+        notificationManager.cancel(generateNotificationId(task.getId(), 4));
     }
 }
