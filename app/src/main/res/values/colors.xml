@@ -49,4 +49,8 @@
     <color name="menu_text_candy">#000000</color>
 
 
+    <color name="light_red">#FD786F</color>
+    <color name="light_green">#6ECB71</color>
+
+
 </resources>

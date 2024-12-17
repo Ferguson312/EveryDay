@@ -9,11 +9,14 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.everyday.R;
+
+import java.util.Calendar;
 
 public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
 
@@ -21,13 +24,13 @@ public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
 
     public interface TaskAdapterListener {
         void onTaskStatusChanged(Task task);
+
         void onTaskDeleted(Task task); // Метод для удаления заметки
     }
 
     public TaskAdapter(TaskAdapterListener listener) {
         super(new TaskDiffCallback());
         this.listener = listener;
-
     }
 
     private static class TaskDiffCallback extends DiffUtil.ItemCallback<Task> {
@@ -83,10 +86,10 @@ public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
                 Task task = new Task(getItem(getAdapterPosition()));
                 task.setDone(isChecked);
                 listener.onTaskStatusChanged(task);
-
             });
         }
 
+        @SuppressLint("ResourceAsColor")
         public void bind(Task task) {
             textViewDescription.setText(task.getDescription());
             String date = task.getDay() + "/" + task.getMonth() + "/" + task.getYear();
@@ -97,8 +100,34 @@ public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
 
             // Показать кнопку удаления только для невыполненных задач
             buttonDelete2.setVisibility(task.isDone() ? View.GONE : View.VISIBLE);
+
+            // Проверка на выполненность задачи
+            if (task.isDone()) {
+                itemView.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.light_green));
+            }
+            // Проверка на просроченность задачи
+            else if (isTaskOverdue(task)) {
+                itemView.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.light_red));
+            } else {
+                itemView.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.white));
+            }
         }
+
+        private boolean isTaskOverdue(Task task) {
+            Calendar now = Calendar.getInstance();
+            Calendar taskTime = Calendar.getInstance();
+            taskTime.set(task.getYear(), task.getMonth() - 1, task.getDay(), task.getHour(), task.getMinute());
+
+            return !task.isDone() && now.after(taskTime); // Просрочено и не выполнено
+        }
+
     }
 
+    private boolean isTaskOverdue(Task task) {
+        Calendar now = Calendar.getInstance();
+        Calendar taskTime = Calendar.getInstance();
+        taskTime.set(task.getYear(), task.getMonth() - 1, task.getDay(), task.getHour(), task.getMinute());
 
+        return !task.isDone() && now.after(taskTime); // Просрочено и не выполнено
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.everyday.ui;
 
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -99,6 +100,14 @@ public class Task implements Comparable<Task>{
             throw new IllegalArgumentException("Минуты должны быть в диапазоне от 0 до 59");
         }
         this.minute = minute;
+    }
+
+    public boolean isOverdue() {
+        Calendar now = Calendar.getInstance();
+        Calendar taskTime = Calendar.getInstance();
+        taskTime.set(year, month - 1, day, hour, minute); // год, месяц, день, час, минута
+
+        return now.after(taskTime); // Если текущее время после времени задачи
     }
 
     // Геттер для состояния выполнения задачи
