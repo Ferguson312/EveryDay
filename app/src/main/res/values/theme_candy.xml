@@ -12,5 +12,6 @@
         <item name="android:popupBackground">@color/menu_background_candy</item>
         <item name="android:textColor">@color/menu_text_candy</item>
         <item name="headerBackgroundColor">@color/candyPrimary</item>
+        <item name="android:statusBarColor">@color/black</item>
     </style>
 </resources>

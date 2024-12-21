@@ -12,6 +12,6 @@
         <item name="colorAccent">@color/skyAccent</item>
         <item name="android:popupBackground">@color/menu_background_sky</item>
         <item name="android:textColor">@color/menu_text_sky</item>
-        <item name="headerBackgroundColor">@color/skyPrimary</item>
+        <item name="android:statusBarColor">@color/black</item>
     </style>
 </resources>
